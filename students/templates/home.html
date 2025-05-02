@@ -1,0 +1,28 @@
+<h1>Student List</h1>
+<form method="GET" action="">
+    <input type="text" name="q" placeholder="Search by name" value="{{ request.GET.q }}">
+    <button type="submit">Search</button>
+</form>
+<a href="{% url 'add_student' %}">Add Student</a>
+<ul>
+    {% for student in students %}
+        <li>{{ student.name }} - {{ student.department }}</li>
+    {% empty %}
+        <li>No students found.</li>
+    {% endfor %}
+</ul>
+
+{% for student in students %}
+    <div>
+        <p>{{ student.name }}</p>
+        <td><a href="{% url 'student_detail' student.id %}">{{ student.name }}</a></td>
+
+        <a href="{% url 'update_student' student.id %}" class="btn btn-primary">Update</a>
+        <a href="{% url 'delete_student' student.id %}" class="btn btn-danger">Delete</a>
+
+        
+    </div>
+{% endfor %}
+
+
+
