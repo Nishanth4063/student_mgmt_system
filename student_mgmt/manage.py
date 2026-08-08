@@ -8,6 +8,9 @@ def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'student_mgmt.settings')
     try:
+        student=int(input("give a student rollno : "))
+        if student == 99:
+            print("its invalied")
         from django.core.management import execute_from_command_line
     except ImportError as exc:
         raise ImportError(
