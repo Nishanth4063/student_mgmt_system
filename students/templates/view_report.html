@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card p-4">
+    <h4 class="fw-bold mb-4">
+        <i class="bi bi-bar-chart-fill me-2"></i>View Report
+    </h4>
+
+    <!-- Filter Form -->
+    <form method="GET" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label class="form-label fw-500">Department</label>
+            <select name="department" class="form-select">
+                <option value="">All Departments</option>
+                {% for dept in departments %}
+                <option value="{{ dept.id }}" 
+                    {% if request.GET.department == dept.id|stringformat:"s" %}selected{% endif %}>
+                    {{ dept.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-500">From Date</label>
+            <input type="date" name="from_date" class="form-control" 
+                value="{{ request.GET.from_date }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-500">To Date</label>
+            <input type="date" name="to_date" class="form-control"
+                value="{{ request.GET.to_date }}">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-1"></i> Search
+            </button>
+        </div>
+    </form>
+
+    <!-- Results Table -->
+    {% if students is not None %}
+    <table class="table table-hover align-middle">
+        <thead style="background:#1f2937; color:white;">
+            <tr>
+                <th>S.No</th>
+                <th>Name</th>
+                <th>Roll No</th>
+                <th>Join Date</th>
+                <th>Department</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.roll_number }}</td>
+                <td>{{ student.join_date }}</td>
+                <td>{{ student.department.name }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                    No students found!
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p class="text-muted mt-2">Total: <strong>{{ students|length }}</strong> students</p>
+    {% else %}
+    <div class="text-center text-muted py-5">
+        <i class="bi bi-filter fs-1 d-block mb-2"></i>
+        Select filters and click Search to view report!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -73,10 +73,18 @@ WSGI_APPLICATION = 'student_mgmt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mssql',
+        'NAME': 'DjangoStudentDB',
+        'USER': 'Nishanth',
+        'PASSWORD': 'Nishanth@123',
+        'HOST': 'localhost,1433',
+        'PORT': '',
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     }
 }
 
