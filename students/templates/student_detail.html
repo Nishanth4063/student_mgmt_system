@@ -10,7 +10,7 @@
                     {{ student.name|first|upper }}
                 </div>
                 <h3 class="fw-bold">{{ student.name }}</h3>
-                <span class="badge bg-secondary">{{ student.department.name }}</span>
+                <span class="badge bg-secondary">{{ student.department.description }} ({{ student.department.name }})</span>
             </div>
             <hr>
             <div class="row g-3">
