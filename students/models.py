@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import date
 
 # Department Table
 class Department(models.Model):
@@ -13,7 +14,7 @@ class Department(models.Model):
 # Student Table
 class Student(models.Model):
     name = models.CharField(max_length=100)
-    dob = models.DateField(null=True)        # DOB instead of age
+    dob = models.DateField(null=True)
     roll_number = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100)
     join_date = models.DateField(null=True)
@@ -23,10 +24,14 @@ class Student(models.Model):
         null=True
     )
 
-    def get_age(self):                       # auto calculate age!
-        from datetime import date
+    def get_age(self):
         today = date.today()
-        return today.year - self.dob.year
+        years = today.year - self.dob.year
+        months = today.month - self.dob.month
+        if months < 0:
+            years -= 1
+            months += 12
+        return f"{years}y {months}m"
 
     def __str__(self):
         return self.name
