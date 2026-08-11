@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card p-4 shadow-sm border-0">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0"><i class="bi bi-diagram-3-fill me-2"></i>Department & Semester Subjects</h4>
+        <a href="{% url 'department_list' %}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Departments
+        </a>
+    </div>
+
+    <!-- Dropdown Selections -->
+    <form method="GET" action="" class="row g-3 mb-4 bg-light p-3 rounded">
+        <div class="col-md-5">
+            <label class="form-label fw-bold">Department</label>
+            <select name="department" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Choose Department --</option>
+                {% for dept in departments %}
+                <option value="{{ dept.id }}" {% if selected_dept == dept.id %}selected{% endif %}>
+                    {{ dept.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-5">
+            <label class="form-label fw-bold">Select Semester</label>
+            <select name="semester" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Choose Semester --</option>
+                {% for s in semesters %}
+                <option value="{{ s }}" {% if selected_sem == s %}selected{% endif %}>
+                    Semester {{ s }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <a href="{% url 'map_subjects' %}" class="btn btn-outline-secondary w-100">Reset</a>
+        </div>
+    </form>
+
+    {% if selected_dept and selected_sem %}
+    
+    <!-- DISPLAY CURRENTLY MAPPED SUBJECTS -->
+    <div class="mb-4">
+        <h5 class="fw-bold text-primary mb-3">
+            <i class="bi bi-list-check me-1"></i>
+            Assigned Subjects for Semester {{ selected_sem }}
+        </h5>
+        
+        {% if assigned_subjects %}
+        <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+            {% for sub in assigned_subjects %}
+            <div class="col">
+                <div class="card h-100 border-start border-4 border-primary p-3 bg-light">
+                    <div class="fw-bold">{{ sub.subject_name }}</div>
+                    <small class="text-muted">Code: <code>{{ sub.subject_code }}</code></small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            No subjects currently assigned to Semester {{ selected_sem }}. Check subjects below to assign them.
+        </div>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <!-- FORM TO ADD / REMOVE SUBJECTS -->
+    <h5 class="fw-bold mb-3"><i class="bi bi-pencil-square me-1"></i>Manage Semester Subjects</h5>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <input type="hidden" name="department" value="{{ selected_dept }}">
+        <input type="hidden" name="semester" value="{{ selected_sem }}">
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 60px;">Select</th>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in subjects %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="subjects" value="{{ sub.id }}" class="form-check-input"
+                                {% if sub.id in assigned_subject_ids %}checked{% endif %}>
+                        </td>
+                        <td><code>{{ sub.subject_code }}</code></td>
+                        <td class="fw-bold">{{ sub.subject_name }}</td>
+                        <td>{{ sub.description|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No subjects added in Subject master table yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-end mt-3">
+            <button type="submit" class="btn btn-success px-4">
+                <i class="bi bi-save me-1"></i> Save Changes
+            </button>
+        </div>
+    </form>
+
+    {% else %}
+    <div class="alert alert-warning text-center">
+        <i class="bi bi-exclamation-triangle me-1"></i> Please select both a <strong>Department</strong> and a <strong>Semester</strong> to view assigned subjects.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

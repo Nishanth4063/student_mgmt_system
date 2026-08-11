@@ -11,10 +11,20 @@ urlpatterns = [
 
     # Department URLs
     path('departments/', views.department_list, name='department_list'),
+    path('departments', views.department_list),  # Fallback for links missing trailing slash
     path('departments/add/', views.add_department, name='add_department'),
     path('departments/update/<int:dept_id>/', views.update_department, name='update_department'),
     path('departments/delete/<int:dept_id>/', views.delete_department, name='delete_department'),
+    path('map-subjects/', views.map_subjects, name='map_subjects'),
 
     # Report URL
     path('report/', views.view_report, name='view_report'),
+    path('report', views.view_report),  # Fallback for links missing trailing slash
+
+    # Subject URLs
+    path('subjects/', views.subject_list, name='subject_list'),
+    path('subjects', views.subject_list),  # Fallback for links missing trailing slash
+    path('subjects/add/', views.add_subject, name='add_subject'),
+    path('subjects/update/<int:subject_id>/', views.update_subject, name='update_subject'),
+    path('subjects/delete/<int:subject_id>/', views.delete_subject, name='delete_subject'),
 ]

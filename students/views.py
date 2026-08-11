@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Student, Department
-from .forms import StudentForm, DepartmentForm
+from .forms import StudentForm, DepartmentForm, SubjectForm
+from .models import Student, Department, Subject, SemesterSubject
 from datetime import date
+from django.http import HttpRequest, HttpResponse
 
 # HOME - Student List
 def home(request):
@@ -102,4 +103,86 @@ def view_report(request):
         'departments': departments,
         'students': students,
         'active_tab': 'report'
+    })
+
+
+# SUBJECT LIST
+def subject_list(request):
+    subjects = Subject.objects.all()
+    return render(request, 'subject_list.html', {'subjects': subjects, 'active_tab': 'subjects'})
+
+# ADD SUBJECT
+def add_subject(request):
+    if request.method == 'POST':
+        form = SubjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('subject_list')
+    else:
+        form = SubjectForm()
+    return render(request, 'add_subject.html', {'form': form})
+
+# UPDATE SUBJECT
+def update_subject(request, subject_id):
+    subject = get_object_or_404(Subject, id=subject_id)
+    form = SubjectForm(request.POST or None, instance=subject)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('subject_list')
+    return render(request, 'update_subject.html', {'form': form})
+
+# DELETE SUBJECT
+def delete_subject(request, subject_id):
+    subject = get_object_or_404(Subject, id=subject_id)
+    if request.method == 'POST':
+        subject.delete()
+        return redirect('subject_list')
+    return render(request, 'delete_subject.html', {'subject': subject})
+
+def map_subjects(request):
+    departments = Department.objects.all()
+    subjects = Subject.objects.all()
+    
+    selected_dept_id = request.GET.get('department')
+    selected_sem = request.GET.get('semester')
+    
+    assigned_subjects = []
+    assigned_subject_ids = []
+
+    if selected_dept_id and selected_sem:
+        # Fetch mapping records for the selected Dept + Semester
+        mappings = SemesterSubject.objects.filter(
+            department_id=selected_dept_id,
+            semester=selected_sem
+        ).select_related('subject')
+        
+        assigned_subject_ids = [m.subject_id for m in mappings]
+        assigned_subjects = [m.subject for m in mappings]
+
+    if request.method == 'POST':
+        dept_id = request.POST.get('department')
+        sem = request.POST.get('semester')
+        chosen_subject_ids = request.POST.getlist('subjects')
+
+        if dept_id and sem:
+            SemesterSubject.objects.filter(department_id=dept_id, semester=sem).delete()
+
+            new_mappings = [
+                SemesterSubject(department_id=dept_id, semester=sem, subject_id=sub_id)
+                for sub_id in chosen_subject_ids
+            ]
+            SemesterSubject.objects.bulk_create(new_mappings)
+            
+            return redirect(f"/map-subjects/?department={dept_id}&semester={sem}")
+
+    return render(request, 'map_subjects.html', {
+        'departments': departments,
+        'subjects': subjects,
+        'semesters': range(1, 9),
+        'selected_dept': int(selected_dept_id) if selected_dept_id else None,
+        'selected_sem': int(selected_sem) if selected_sem else None,
+        'assigned_subject_ids': assigned_subject_ids,
+        'assigned_subjects': assigned_subjects,
+        'active_tab': 'departments'
     })

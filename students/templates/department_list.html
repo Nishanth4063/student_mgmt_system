@@ -8,41 +8,47 @@
             <i class="bi bi-plus-circle me-1"></i> Add Department
         </a>
     </div>
-    <table class="table table-hover align-middle">
-        <thead style="background:#1f2937; color:white;">
-            <tr>
-                <th>S.No</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Modified On</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for dept in departments %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td><strong>{{ dept.name }}</strong></td>
-                <td>{{ dept.description }}</td>
-                <td>{{ dept.modified_on|date:"d-m-Y" }}</td>
-                <td>
-                    <a href="{% url 'update_department' dept.id %}" class="btn btn-warning btn-sm me-1 text-white">
-                        <i class="bi bi-pencil"></i> Edit
-                    </a>
-                    <a href="{% url 'delete_department' dept.id %}" class="btn btn-danger btn-sm">
-                        <i class="bi bi-trash"></i> Delete
-                    </a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="text-center text-muted py-4">
-                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                    No departments found. <a href="{% url 'add_department' %}">Add one!</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead style="background:#1f2937; color:white;">
+                <tr>
+                    <th>S.No</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Modified On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept in departments %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><strong>{{ dept.name }}</strong></td>
+                    <td>{{ dept.description }}</td>
+                    <td>{{ dept.modified_on|date:"d-m-Y" }}</td>
+                    <td>
+                        <!-- NEW: Assign Subjects Button -->
+                        <a href="{% url 'map_subjects' %}?department={{ dept.id }}" class="btn btn-info btn-sm me-1 text-white">
+                            <i class="bi bi-book"></i> Assign Subjects
+                        </a>
+                        <a href="{% url 'update_department' dept.id %}" class="btn btn-warning btn-sm me-1 text-white">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_department' dept.id %}" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                        No departments found. <a href="{% url 'add_department' %}">Add one!</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
