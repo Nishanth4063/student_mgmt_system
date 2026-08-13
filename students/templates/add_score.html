@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card p-4 shadow-sm border-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">
+            <i class="bi bi-trophy-fill me-2"></i>Enter Marks
+        </h4>
+        <a href="{% url 'score_list' %}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Scores
+        </a>
+    </div>
+
+    <!-- STEP 1 & 2: SELECTION FORM -->
+    <form method="GET" action="" class="row g-3 mb-4 bg-light p-3 rounded">
+        <!-- Student Selection -->
+        <div class="col-md-5">
+            <label class="form-label fw-bold">Select Student</label>
+            <select name="student" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Choose Student --</option>
+                {% for st in students %}
+                <option value="{{ st.id }}" {% if selected_student.id == st.id %}selected{% endif %}>
+                    {{ st.name }} ({{ st.roll_number }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Auto-detected Department Badge -->
+        <div class="col-md-2">
+            <label class="form-label fw-bold">Department</label>
+            <input type="text" class="form-control bg-white fw-bold text-primary" 
+                   value="{{ selected_student.department.name|default:'N/A' }}" readonly>
+        </div>
+
+        <!-- Semester Selection -->
+        <div class="col-md-3">
+            <label class="form-label fw-bold">Select Semester</label>
+            <select name="semester" class="form-select" onchange="this.form.submit()" {% if not selected_student %}disabled{% endif %}>
+                <option value="">-- Choose Semester --</option>
+                {% for sem in semesters %}
+                <option value="{{ sem }}" {% if selected_sem == sem %}selected{% endif %}>
+                    Semester {{ sem }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="col-md-2 d-flex align-items-end">
+            <a href="{% url 'add_score' %}" class="btn btn-outline-secondary w-100">Reset</a>
+        </div>
+    </form>
+
+    <!-- STEP 3 & 4: MARKS ENTRY FORM -->
+    {% if selected_student and selected_sem %}
+        {% if mapped_subjects %}
+        <form method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" name="student" value="{{ selected_student.id }}">
+            <input type="hidden" name="semester" value="{{ selected_sem }}">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 60px;">S.No</th>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th style="width: 200px;">Marks Obtained</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in mapped_subjects %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><code>{{ sub.subject_code }}</code></td>
+                            <td class="fw-bold">{{ sub.subject_name }}</td>
+                            <td>
+                                <input type="number" name="marks_{{ sub.id }}" class="form-control" 
+                                       placeholder="Enter marks" min="0" max="100" step="0.5" required>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-success px-4">
+                    <i class="bi bi-save me-1"></i> Submit Marks
+                </button>
+            </div>
+        </form>
+        {% else %}
+        <div class="alert alert-warning text-center">
+            <i class="bi bi-exclamation-triangle me-1"></i> No subjects are mapped to 
+            <strong>{{ selected_student.department.name }}</strong> for <strong>Semester {{ selected_sem }}</strong>. 
+            Please map subjects in the Department module first.
+        </div>
+        {% endif %}
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="bi bi-info-circle me-1"></i> Please select both a <strong>Student</strong> and a <strong>Semester</strong> to enter marks.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

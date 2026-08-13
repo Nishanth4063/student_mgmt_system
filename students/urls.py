@@ -20,6 +20,11 @@ urlpatterns = [
     # Report URL
     path('report/', views.view_report, name='view_report'),
     path('report', views.view_report),  # Fallback for links missing trailing slash
+    
+    path('scores/', views.score_list, name='score_list'),
+    path('scores/add/', views.add_score, name='add_score'), 
+    path('scores/update/<int:score_id>/', views.update_score, name='update_score'),
+    path('scores/delete/<int:score_id>/', views.delete_score, name='delete_score'),
 
     # Subject URLs
     path('subjects/', views.subject_list, name='subject_list'),
@@ -27,4 +32,5 @@ urlpatterns = [
     path('subjects/add/', views.add_subject, name='add_subject'),
     path('subjects/update/<int:subject_id>/', views.update_subject, name='update_subject'),
     path('subjects/delete/<int:subject_id>/', views.delete_subject, name='delete_subject'),
+
 ]

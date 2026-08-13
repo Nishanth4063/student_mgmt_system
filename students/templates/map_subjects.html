@@ -87,18 +87,22 @@
                 </thead>
                 <tbody>
                     {% for sub in subjects %}
-                    <tr>
-                        <td>
-                            <input type="checkbox" name="subjects" value="{{ sub.id }}" class="form-check-input"
-                                {% if sub.id in assigned_subject_ids %}checked{% endif %}>
-                        </td>
-                        <td><code>{{ sub.subject_code }}</code></td>
-                        <td class="fw-bold">{{ sub.subject_name }}</td>
-                        <td>{{ sub.description|default:"-" }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">No subjects added in Subject master table yet.</td>
+                   <tr class="{% if sub.id in disabled_subject_ids and sub.id not in assigned_subject_ids %}table-light text-muted{% endif %}">
+                   <td>
+                       <input type="checkbox" name="subjects" value="{{ sub.id }}" class="form-check-input"
+                           {% if sub.id in assigned_subject_ids %}checked{% endif %}
+                           {% if sub.id in disabled_subject_ids and sub.id not in assigned_subject_ids %}disabled{% endif %}>
+                    </td>
+                    <td><code>{{ sub.subject_code }}</code></td>
+                    <td class="fw-bold">
+                    {{ sub.subject_name }}
+                    {% if sub.id in disabled_subject_ids and sub.id not in assigned_subject_ids %}
+                    <span class="badge bg-secondary ms-2 fw-normal">Assigned to another semester in this department</span>
+                    {% elif sub.id in disabled_subject_ids and sub.id in assigned_subject_ids %}
+                    <span class="badge bg-warning text-dark ms-2 fw-normal">Duplicate mapping detected in another semester</span>
+                    {% endif %}
+                    </td>
+                    <td>{{ sub.description|default:"-" }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card p-4 text-center">
+            <div class="text-danger mb-3" style="font-size:3rem">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h4 class="fw-bold">Delete Score?</h4>
+            <p class="text-muted">Are you sure you want to delete score of <strong>{{ score.student.name }}</strong> for <strong>{{ score.subject.subject_name }}</strong>?</p>
+            <div class="d-flex gap-2 justify-content-center mt-3">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary px-4">
+                        <i class="bi bi-trash me-1"></i> Yes, Delete
+                    </button>
+                </form>
+                <a href="{% url 'score_list' %}" class="btn btn-primary px-4">
+                    <i class="bi bi-x-circle me-1"></i> Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold mb-0">
+                    <i class="bi bi-pencil-square me-2 text-success"></i>Update Score
+                </h3>
+                <a href="{% url 'score_list' %}" class="btn btn-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Back
+                </a>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Student</label>
+                    {{ form.student }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Subject</label>
+                    {{ form.subject }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Marks (0-100)</label>
+                    {{ form.marks }}
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-2">
+                    <i class="bi bi-check-circle me-2"></i>Update Score
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

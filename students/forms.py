@@ -1,5 +1,5 @@
 from django import forms
-from .models import Student, Department, Subject, SemesterSubject  # Strictly relative
+from .models import Student, Department, Subject, SemesterSubject, Score  
 
 class DepartmentForm(forms.ModelForm):
     class Meta:
@@ -31,4 +31,14 @@ class SubjectForm(forms.ModelForm):
             'subject_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Data Structures'}),
             'subject_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. CS301'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+class ScoreForm(forms.ModelForm):
+    class Meta:
+        model = Score
+        fields = ['student', 'subject', 'marks']
+        widgets = {
+            'student': forms.Select(attrs={'class': 'form-select'}),
+            'subject': forms.Select(attrs={'class': 'form-select'}),
+            'marks': forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'max': 100}),
         }

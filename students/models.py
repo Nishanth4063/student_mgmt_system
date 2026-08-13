@@ -65,3 +65,14 @@ class SemesterSubject(models.Model):
 
     def __str__(self):
         return f"{self.department.name} - Sem {self.semester} - {self.subject.subject_code}"
+
+class Score(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    marks = models.IntegerField()
+
+    class Meta:
+        unique_together = ('student', 'subject')
+
+    def __str__(self):
+        return f"{self.student.name} - {self.subject.subject_name} - {self.marks}"
